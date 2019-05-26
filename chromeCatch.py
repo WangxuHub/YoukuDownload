@@ -21,7 +21,9 @@ option.add_argument('log-level=3')
 browser = webdriver.Chrome(options=option, desired_capabilities=d)
 
 
-videoHtmlUrl = 'https://v.youku.com/v_show/id_XMjY4NjM5Mzc0MA==.html'
+# videoHtmlUrl = 'https://v.youku.com/v_show/id_XMjY4NjM5Mzc0MA==.html'
+videoHtmlUrl = 'https://v.youku.com/v_show/id_XNDE4MjY1NjEyOA==.html'
+
 # browser.get(videoHtmlUrl)
 
 # 使用vip账号，免去广告
@@ -52,6 +54,8 @@ def videoLoad():
         totalSecond = float(videoDom.get_attribute('duration')) - 2
         currentTime = 0
         fastScript = '$("video")[0].currentTime={0}'
+        
+        # while currentTime < 60:
         while currentTime < totalSecond:
             browser.execute_script(fastScript.format(currentTime))
             time.sleep(0.4)
@@ -88,6 +92,9 @@ def  catchVideoTs():
     for item in videoTsList:
         content = requests.get(item).content
         if len(content) < 70000:
+            print(item)
+            print('===============================')
+            print(content)
             continue
         if index == 0:
             with open('hy/1/123.ts', 'wb') as p:
@@ -99,7 +106,7 @@ def  catchVideoTs():
                 print(str(index) + 'load finish')
         index += 1
 
-# 在写入的时候，直接就进行和平了         
+# 在写入的时候，直接就进行合并了         
 # def concatVideo():
 #     os.system('cd hy/1 & copy /b *.ts new.ts')
 #     pass
