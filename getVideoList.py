@@ -7,6 +7,7 @@ headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
 }
 pageRequest = 'https://v.youku.com/page/playlist?showid={0}&isSimple=false&page={1}'
+videoUrl = 'https://v.youku.com/v_show/id_XMjcxNDk2NTkyNA'
 
 def getVideoDir(url):
     videoCsv = open('video.csv', 'w', newline='', encoding='utf-8')
@@ -49,7 +50,6 @@ def getVideoDir(url):
 
 
 
-videoUrl = 'https://v.youku.com/v_show/id_XMjcxNDk2NTkyNA';
 
 if __name__ == "__main__":
     getVideoDir(videoUrl)
