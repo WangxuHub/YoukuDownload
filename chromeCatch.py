@@ -111,6 +111,10 @@ def  catchVideoTs():
 #     os.system('cd hy/1 & copy /b *.ts new.ts')
 #     pass
 
+def m3u8ToMp4():
+    cmdStr ='.\ffmpeg.exe -protocol_whitelist "file,http,https,rtp,udp,tcp,tls"  -i .\123.m3u8 123.mp4'
+    pass
+
 login()
 videoLoad()
 catchVideoTs()
