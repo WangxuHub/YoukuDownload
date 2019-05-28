@@ -162,9 +162,9 @@ def m3u8ToMp4():
     os.system(cmdStr)
     pass
 
-#login()
-#videoLoad()
-#catchVideoTs()
-#getVideoInfo()-
+login()
+# videoLoad()
+# # catchVideoTs()
+# getVideoInfo()
 
-m3u8ToMp4()
+# m3u8ToMp4()
