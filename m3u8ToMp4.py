@@ -39,5 +39,12 @@ def downloadTs(m3u8File, saveTsFile):
         sys.stdout.write("\r%s:[%s%s] %d%%" % (name, '█' * processLength, ' ' * (50 - processLength), done))
         sys.stdout.flush()
 
+def TsToMp4(tsFile, assFile, mp4File):
+    cmdStr = r'.\tools\ffmpeg.exe -i {tsFile} -y -vf subtitles={assFile} {mp4File}'
+    execStr = cmdStr.format(tsFile=tsFile, assFile=assFile, mp4File=mp4File)
+    print(execStr)
+    os.system(execStr)
+    pass
 
-downloadTs('TestData/demo.m3u8', 'hy/tsDownload/demo.ts')
+# downloadTs('TestData/demo.m3u8', 'hy/tsDownload/demo.ts')
+TsToMp4('hy/tsDownload/demo.ts', 'TestData/demo.ass', 'hy/tsDownload/demo.mp4')
