@@ -28,9 +28,12 @@ def start():
         chromeHandler = chromeCatch.ChromeCatch(
             curVideoItem[0], curVideoItem[1], curVideoItem[2], videoGroupName)
 
-        chromeHandler.downloadVideoMidFile()
-
-        curVideoItem.append('m3u8')
+        try:
+            chromeHandler.downloadVideoMidFile()
+            curVideoItem.append('m3u8')
+        except Exception as e:
+            curVideoItem.append('fail:'+e)
+            
         videoHelper.updateDownLoadItem(curVideoItem)
 
     print('视频下载完毕')
