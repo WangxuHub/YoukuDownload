@@ -1,7 +1,9 @@
 import os
 import sys
+import time
 
 import lib.videoDownload as videoDownload
+import lib.chromeCatch as chromeCatch
 # 抓取优酷视频
 
 videoGroupName = '火影忍者《博人传》'
@@ -15,12 +17,22 @@ def start():
         videoHelper.initVideoCsv()
         print('初始化csv文件 {0} 完成'.format(videoHelper.getCsvFile()))
 
+    chromeCatch.ChromeCatch.login()
+    time.sleep(3)
+
     while True:
         curVideoItem = videoHelper.getUnDownLoadItem()
         if len(curVideoItem) == 0:
             break
 
-        
+        chromeHandler = chromeCatch.ChromeCatch(
+            curVideoItem[0], curVideoItem[1], curVideoItem[2], videoGroupName)
+
+        chromeHandler.downloadVideoMidFile()
+
+        curVideoItem.append('m3u8')
+        videoHelper.updateDownLoadItem(curVideoItem)
+
     print('视频下载完毕')
 
 
