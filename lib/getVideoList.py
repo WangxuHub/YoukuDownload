@@ -48,9 +48,6 @@ def getVideoDir(url):
     videoCsv.close()
     print('=======finish======')
 
-
-
-
 if __name__ == "__main__":
     getVideoDir(videoUrl)
     pass
