@@ -55,6 +55,25 @@ class VideoDownload:
 
         return curRow
 
+    # 获取未转换的Ts文件
+    def getUnConvertTsItem(self):
+        '''
+            获取未转换的影集Ts
+        '''
+
+        csvFile = self.getCsvFile()
+
+        curRow = []
+        with open(csvFile, 'r', newline='', encoding='utf-8') as videoCsv:
+            csv_reader = csv.reader(videoCsv)
+
+            for item in csv_reader:
+                if len(item) == 5 and item[4] == 'ts':
+                    curRow = item
+                    break
+
+        return curRow
+
     # 更新当前视频下载的进度
     def updateDownLoadItem(self, row):
         '''
@@ -160,6 +179,21 @@ class VideoDownload:
             sys.stdout.flush()
         print('')
 
+    def convertTsToMp4(self, videoIndex ,videoName):
+        tsFilePath = self.getFileTsPath(videoIndex, videoName)
+        assFilePath = self.__getFileAssPath(videoIndex, videoName)
+        mp4FilePath = self.getFileMp4Path(videoIndex, videoName)
+
+        if not os.path.exists(tsFilePath):
+            return
+
+        cmdStr = r'.\tools\ffmpeg.exe -i {0} -y -vf subtitles={1} {2}'.format(tsFilePath, assFilePath, mp4FilePath)
+
+        if not os.path.exists(assFilePath):
+            cmdStr = r'.\tools\ffmpeg.exe -i {0} -y {1}'.format(tsFilePath, mp4FilePath)
+
+        os.system(cmdStr)
+
     # 获取m3u8视频文件的保存路径
     def getFileM3u8Path(self, videoIndex, videoName):
         '''
@@ -180,6 +214,14 @@ class VideoDownload:
             获取ts的保存路径
         '''
         return 'download/{0}/{1}_{2}.ts'.format(self.__videoGroupName, videoIndex, videoName)
+
+        
+    # 获取mp4的保存路径
+    def getFileMp4Path(self, videoIndex, videoName):
+        '''
+            获取mp4的保存路径
+        '''
+        return 'download/{0}/{1}_{2}.mp4'.format(self.__videoGroupName, videoIndex, videoName)
 
 
 

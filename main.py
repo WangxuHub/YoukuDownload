@@ -58,14 +58,31 @@ def start():
                 videoHelper.downloadTs(m3u8File, tsFile)
                 curVideoItem[4] = 'ts'
             except Exception as e:
-                curVideoItem.append('fail:'+str(e))
+                curVideoItem[4]('fail:'+str(e))
 
             videoHelper.updateDownLoadItem(curVideoItem)
-        
+    
+    def convertTsToMp4():
+        while True:
+            curVideoItem = videoHelper.getUnConvertTsItem()
+            if len(curVideoItem) == 0:
+                break
+
+            try:
+                curVideoItem.append('converting')
+                videoHelper.updateDownLoadItem(curVideoItem)
+
+                videoHelper.convertTsToMp4(curVideoItem[0], curVideoItem[1])
+                curVideoItem[5]('mp4')
+            except Exception as e:
+                curVideoItem[5]('fail:'+e)
+
+            videoHelper.updateDownLoadItem(curVideoItem)
+
     downloadM3u8()
 
     
-    threadCount = 16
+    threadCount = 1
 
     threads = []
     for i in range(threadCount):
@@ -76,6 +93,8 @@ def start():
         t.setDaemon(True)
         t.start()
     t.join()
+
+    convertTsToMp4()
     print('======================finish=======================')
     # downloadTs()
     print('视频下载完毕')
