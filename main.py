@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+from threading import Thread
 
 import lib.videoDownload as videoDownload
 import lib.chromeCatch as chromeCatch
@@ -20,24 +21,64 @@ def start():
     chromeCatch.ChromeCatch.login()
     time.sleep(3)
 
-    while True:
-        curVideoItem = videoHelper.getUnDownLoadItem()
-        if len(curVideoItem) == 0:
-            break
+    # 下载m3u8 和 ass 文件
+    def downloadM3u8():
+        while True:
+            curVideoItem = videoHelper.getUnDownLoadM3u8Item()
+            if len(curVideoItem) == 0:
+                break
 
-        chromeHandler = chromeCatch.ChromeCatch(
-            curVideoItem[0], curVideoItem[1], curVideoItem[2], videoGroupName)
+            chromeHandler = chromeCatch.ChromeCatch(
+                curVideoItem[0], curVideoItem[1], curVideoItem[2], videoGroupName)
 
-        try:
-            chromeHandler.downloadVideoMidFile()
-            curVideoItem.append('m3u8')
-        except Exception as e:
-            curVideoItem.append('fail:'+e)
+            try:
+                chromeHandler.downloadVideoMidFile()
+                curVideoItem.append('m3u8')
+            except Exception as e:
+                curVideoItem.append('fail:'+e)
+
+            videoHelper.updateDownLoadItem(curVideoItem)
+
+    def downloadTs():
+        while True:
+            curVideoItem = videoHelper.getUnDownLoadTsItem()
+            if len(curVideoItem) == 0:
+                break
+
+            videoIndex = curVideoItem[0]
+            videoName = curVideoItem[1]
             
-        videoHelper.updateDownLoadItem(curVideoItem)
+            m3u8File = videoHelper.getFileM3u8Path(videoIndex, videoName)
+            tsFile = videoHelper.getFileTsPath(videoIndex, videoName)
 
+            try:
+                curVideoItem.append('downloading')
+                videoHelper.updateDownLoadItem(curVideoItem)
+
+                videoHelper.downloadTs(m3u8File, tsFile)
+                curVideoItem[4] = 'ts'
+            except Exception as e:
+                curVideoItem.append('fail:'+str(e))
+
+            videoHelper.updateDownLoadItem(curVideoItem)
+        
+    downloadM3u8()
+
+    
+    threadCount = 16
+
+    threads = []
+    for i in range(threadCount):
+        # TODO: 线程锁未加上，出现了数据竞争
+        threads.append(Thread(target=downloadTs))
+
+    for t in threads:
+        t.setDaemon(True)
+        t.start()
+    t.join()
+    print('======================finish=======================')
+    # downloadTs()
     print('视频下载完毕')
-
 
 if __name__ == "__main__":
     if len(sys.argv) >1:

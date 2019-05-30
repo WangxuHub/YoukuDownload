@@ -2,6 +2,7 @@ import csv
 import os
 import requests
 import re
+import sys
 from pyquery import PyQuery as pq
 
 class VideoDownload:
@@ -17,9 +18,9 @@ class VideoDownload:
         return 'download/' + self.__videoGroupName + '/video.csv'
 
     # 获取未下载的视频
-    def getUnDownLoadItem(self):
+    def getUnDownLoadM3u8Item(self):
         '''
-            获取未下载的影集
+            获取未下载的影集m3u8
         '''
 
         csvFile = self.getCsvFile()
@@ -30,6 +31,25 @@ class VideoDownload:
 
             for item in csv_reader:
                 if len(item) == 3:
+                    curRow = item
+                    break
+
+        return curRow
+
+    # 获取未下载的视频Ts
+    def getUnDownLoadTsItem(self):
+        '''
+            获取未下载的影集Ts
+        '''
+
+        csvFile = self.getCsvFile()
+
+        curRow = []
+        with open(csvFile, 'r', newline='', encoding='utf-8') as videoCsv:
+            csv_reader = csv.reader(videoCsv)
+
+            for item in csv_reader:
+                if len(item) == 4 and item[3] == 'm3u8':
                     curRow = item
                     break
 
@@ -111,8 +131,55 @@ class VideoDownload:
 
     def __safeFileName(self, fileName):
         retStr = re.sub('[\/:*?"<>|]','-', fileName) #去掉非法字符  
-        
         return retStr
+
+    def downloadTs(self, m3u8File, saveTsFile):
+        m3u6Content = ''
+        with open(m3u8File, 'r') as f:
+            m3u6Content = f.read()
+        
+        tsLinkArr = re.findall( r'(http.*)', m3u6Content, re.I|re.M)
+        
+        dir = os.path.dirname(saveTsFile)
+        if not os.path.isdir(dir):
+            os.makedirs(dir)
+
+        name = os.path.basename(m3u8File)
+        for index,item  in enumerate(tsLinkArr):
+            tsContent = requests.get(item).content
+            if index == 0:
+                with open(saveTsFile, 'wb') as f:
+                    f.write(tsContent)
+            else:
+                with open(saveTsFile, 'ab+') as f:
+                    f.write(tsContent)
+            
+            done = (index+1) / len(tsLinkArr) * 100
+            processLength = int(done/2)
+            sys.stdout.write("\r%s:[%s%s] %d%%" % (name, '█' * processLength, ' ' * (50 - processLength), done))
+            sys.stdout.flush()
+        print('')
+
+    # 获取m3u8视频文件的保存路径
+    def getFileM3u8Path(self, videoIndex, videoName):
+        '''
+            获取m3u8视频文件的保存路径
+        '''
+        return 'download/{0}/{1}_{2}.m3u8'.format(self.__videoGroupName, videoIndex, videoName)
+
+    # 获取ass字幕的保存路径
+    def __getFileAssPath(self, videoIndex, videoName):
+        '''
+            获取ass字幕的保存路径
+        '''
+        return 'download/{0}/{1}_{2}.ass'.format(self.__videoGroupName, videoIndex, videoName)
+ 
+    # 获取ts的保存路径
+    def getFileTsPath(self, videoIndex, videoName):
+        '''
+            获取ts的保存路径
+        '''
+        return 'download/{0}/{1}_{2}.ts'.format(self.__videoGroupName, videoIndex, videoName)
 
 
 
