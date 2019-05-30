@@ -99,7 +99,8 @@ class VideoDownload:
                     title = item.attr['title']
                     link = 'https:'+ item('a.sn').attr['href']
 
-                    csv_writer.writerow((videoIndex, title, link))
+                    safeFileName = self.__safeFileName(title)
+                    csv_writer.writerow((videoIndex, safeFileName, link))
 
                     videoIndex += 1
                 pageIndex += 1
@@ -108,7 +109,10 @@ class VideoDownload:
 
         videoCsv.close()
 
-
+    def __safeFileName(self, fileName):
+        retStr = re.sub('[\/:*?"<>|]','-', fileName) #去掉非法字符  
+        
+        return retStr
 
 
 
