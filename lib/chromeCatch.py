@@ -18,7 +18,7 @@ d['loggingPrefs'] = { 'performance':'ALL' }
 
 option = webdriver.ChromeOptions()
 option.add_argument('log-level=3')
-browser = webdriver.Chrome(options=option, desired_capabilities=d)
+browser = None # = webdriver.Chrome(options=option, desired_capabilities=d)
 
 
 # videoHtmlUrl = 'https://v.youku.com/v_show/id_XMjY4NjM5Mzc0MA==.html'
@@ -45,8 +45,10 @@ class ChromeCatch:
 
         global isLogin
         if isLogin:
-            return
+            return False
             
+        global browser    
+        browser = webdriver.Chrome(options=option, desired_capabilities=d)
         # loginUrl = 'https://account.youku.com/?callback={0}'.format(urllib.parse.quote(videoHtmlUrl))
         loginUrl = 'https://account.youku.com/'
 
@@ -65,6 +67,7 @@ class ChromeCatch:
         browser.find_element_by_id('YT-nloginSubmit').click()
         
         isLogin = True
+        return True
 
     # 下载视频中间文件 包括m3u8,视频ts文件,字幕ass文件
     def downloadVideoMidFile(self):

@@ -149,7 +149,7 @@ class VideoDownload:
         videoCsv.close()
 
     def __safeFileName(self, fileName):
-        retStr = re.sub('[\/:*?"<>|]','-', fileName) #去掉非法字符  
+        retStr = re.sub(r'[\/:*?"<>|]','-', fileName) #去掉非法字符  
         return retStr
 
     def downloadTs(self, m3u8File, saveTsFile):

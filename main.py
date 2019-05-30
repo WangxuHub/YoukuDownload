@@ -18,8 +18,6 @@ def start():
         videoHelper.initVideoCsv()
         print('初始化csv文件 {0} 完成'.format(videoHelper.getCsvFile()))
 
-    chromeCatch.ChromeCatch.login()
-    time.sleep(3)
 
     # 下载m3u8 和 ass 文件
     def downloadM3u8():
@@ -30,6 +28,9 @@ def start():
 
             chromeHandler = chromeCatch.ChromeCatch(
                 curVideoItem[0], curVideoItem[1], curVideoItem[2], videoGroupName)
+
+            if chromeCatch.ChromeCatch.login():
+                time.sleep(3)
 
             try:
                 chromeHandler.downloadVideoMidFile()
@@ -58,7 +59,7 @@ def start():
                 videoHelper.downloadTs(m3u8File, tsFile)
                 curVideoItem[4] = 'ts'
             except Exception as e:
-                curVideoItem[4]('fail:'+str(e))
+                curVideoItem[4] = 'fail:'+str(e)
 
             videoHelper.updateDownLoadItem(curVideoItem)
     
@@ -73,9 +74,10 @@ def start():
                 videoHelper.updateDownLoadItem(curVideoItem)
 
                 videoHelper.convertTsToMp4(curVideoItem[0], curVideoItem[1])
-                curVideoItem[5]('mp4')
+                curVideoItem[5] = 'mp4'
             except Exception as e:
-                curVideoItem[5]('fail:'+e)
+                print(e)
+                curVideoItem[5] = 'fail:'+e
 
             videoHelper.updateDownLoadItem(curVideoItem)
 
