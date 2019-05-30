@@ -17,11 +17,10 @@ def start():
 
     while True:
         curVideoItem = videoHelper.getUnDownLoadItem()
-
-
-
         if len(curVideoItem) == 0:
             break
+
+        
     print('视频下载完毕')
 
 
