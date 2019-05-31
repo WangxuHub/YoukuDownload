@@ -187,10 +187,10 @@ class VideoDownload:
         if not os.path.exists(tsFilePath):
             return
 
-        cmdStr = r'.\tools\ffmpeg.exe -hwaccel auto -i "{0}" -y -vf subtitles="{1}" "{2}"'.format(tsFilePath, assFilePath, mp4FilePath)
+        cmdStr = r'.\tools\ffmpeg -hwaccel auto -i "{0}" -y -vf subtitles="{1}" "{2}"'.format(tsFilePath, assFilePath, mp4FilePath)
 
         if not os.path.exists(assFilePath):
-            cmdStr = r'.\tools\ffmpeg.exe -hwaccel auto -i "{0}" -y "{1}"'.format(tsFilePath, mp4FilePath)
+            cmdStr = r'.\tools\ffmpeg -hwaccel auto -i "{0}" -y "{1}"'.format(tsFilePath, mp4FilePath)
 
         res = os.system(cmdStr)
 
