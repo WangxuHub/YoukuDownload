@@ -45,12 +45,11 @@ class ChromeCatch:
         if isLogin:
             return False
             
-        global browser    
-        browser = webdriver.Chrome(options=option, desired_capabilities=d)
+        self.__browser = webdriver.Chrome(options=option, desired_capabilities=d)
+        browser = self.__browser
         # loginUrl = 'https://account.youku.com/?callback={0}'.format(urllib.parse.quote(videoHtmlUrl))
         loginUrl = 'https://account.youku.com/'
 
-        browser = self.__browser
         print('before get')
         browser.get(loginUrl)
         print('after get')

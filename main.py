@@ -29,14 +29,14 @@ def start():
             chromeHandler = chromeCatch.ChromeCatch(
                 curVideoItem[0], curVideoItem[1], curVideoItem[2], videoGroupName)
 
-            if chromeCatch.ChromeCatch.login():
+            if chromeHandler.login():
                 time.sleep(3)
 
             try:
                 chromeHandler.downloadVideoMidFile()
                 curVideoItem.append('m3u8')
             except Exception as e:
-                curVideoItem.append('fail:'+e)
+                curVideoItem.append('fail:' + str(e))
 
             videoHelper.updateDownLoadItem(curVideoItem)
 
@@ -77,13 +77,12 @@ def start():
                 curVideoItem[5] = 'mp4'
             except Exception as e:
                 print(e)
-                curVideoItem[5] = 'fail:'+e
+                curVideoItem[5] = 'fail:' + str(e)
 
             videoHelper.updateDownLoadItem(curVideoItem)
 
     downloadM3u8()
 
-    
     threadCount = 1
 
     threads = []
