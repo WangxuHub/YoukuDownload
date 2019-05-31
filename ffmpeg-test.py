@@ -22,6 +22,7 @@ def test2():
 
     # 105
     # os.system(r'.\tools\ffmpeg.exe -hwaccel auto  -y -i .\TestData\2.ts .\TestData\2.mp4')
+    os.system(r'.\tools\ffmpeg.exe -y -i .\TestData\2.ts -c:v h264_amf .\TestData\2.mp4')
     
     #-c:v h264_amf 
     pass    

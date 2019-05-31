@@ -10,3 +10,5 @@ __pycache__
 /tools/ffmpeg.exe
 /data/youkuAccount.py
 /download
+/TestData/2.mp4
+/TestData/2.ts
