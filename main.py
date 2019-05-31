@@ -40,6 +40,8 @@ def start():
 
             videoHelper.updateDownLoadItem(curVideoItem)
 
+        chromeCatch.ChromeCatch.close()
+
     def downloadTs():
         while True:
             curVideoItem = videoHelper.getUnDownLoadTsItem()
@@ -104,6 +106,9 @@ if __name__ == "__main__":
     if len(sys.argv) >1:
         videoGroupName = sys.argv[1]
         videoHomeUrl = sys.argv[2]
+
+    videoGroupName = "一拳超人 第二季"
+    videoHomeUrl = "https://v.youku.com/v_show/id_XNDEyMjM2MTgzNg==.html"
 
     start()
 

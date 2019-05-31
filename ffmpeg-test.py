@@ -27,10 +27,20 @@ def test2():
     #-c:v h264_amf 
     pass    
 
+
+def test3():
+    cmdStr = r'.\tools\ffmpeg.exe -1111hwaccel auto -i "{0}" -y "{1}"'.format('asd asds', '行政村三 阿萨德')
+
+    # a = os.system(cmdStr) #  1
+    b = os.system(r'.\tools\ffmpeg.exe -h') # 0
+    aa = 2
+
+
 t1 = time.time()
 
-#test1()
-test2()
+# test1()
+# test2()
+test3()
 
 t2 = time.time()
 

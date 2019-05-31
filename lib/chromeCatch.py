@@ -24,6 +24,7 @@ videoHtmlUrl = 'https://v.youku.com/v_show/id_XNDE4MjY1NjEyOA==.html'
 
 # browser.get(videoHtmlUrl)
 
+singleBrower = None
 isLogin = False
 class ChromeCatch:
     global isLogin
@@ -33,7 +34,7 @@ class ChromeCatch:
         self.__videoName = videoName
         self.__videoUrl = videoUrl
         self.__videoGroupName = videoGroupName
-        self.__browser = None # = webdriver.Chrome(options=option, desired_capabilities=d)
+        # self.__browser = None # = webdriver.Chrome(options=option, desired_capabilities=d)
 
     # 使用vip账号，免去广告
     def login(self):
@@ -42,17 +43,18 @@ class ChromeCatch:
         '''
 
         global isLogin
+        global singleBrower
         if isLogin:
             return False
             
-        self.__browser = webdriver.Chrome(options=option, desired_capabilities=d)
-        browser = self.__browser
-        # loginUrl = 'https://account.youku.com/?callback={0}'.format(urllib.parse.quote(videoHtmlUrl))
+        # self.__browser = webdriver.Chrome(options=option, desired_capabilities=d)
+        
+        singleBrower = webdriver.Chrome(options=option, desired_capabilities=d)
+        browser = singleBrower
+        
         loginUrl = 'https://account.youku.com/'
 
-        print('before get')
         browser.get(loginUrl)
-        print('after get')
 
         browser.find_element_by_id('YT-showNormalLogin-text').click()
 
@@ -69,7 +71,10 @@ class ChromeCatch:
 
     # 下载视频中间文件 包括m3u8,视频ts文件,字幕ass文件
     def downloadVideoMidFile(self):
-        browser = self.__browser
+        # browser = self.__browser
+        global singleBrower
+        
+        browser = singleBrower
         browser.get(self.__videoUrl)
 
         # 切换为1080P
@@ -108,6 +113,14 @@ class ChromeCatch:
         with open(m3u8FilePath, 'wb') as p:
             content = requests.get(m3u8Link).content
             p.write(content)
+
+    @staticmethod
+    def close():
+        global singleBrower
+
+        if singleBrower!=None:
+            singleBrower.close()
+            singleBrower = None
 
     # 获取m3u8视频文件的保存路径
     def __getFileM3u8Path(self):

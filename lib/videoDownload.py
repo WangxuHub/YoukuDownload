@@ -177,8 +177,8 @@ class VideoDownload:
             processLength = int(done/2)
             sys.stdout.write("\r%s:[%s%s] %d%%" % (name, '█' * processLength, ' ' * (50 - processLength), done))
             sys.stdout.flush()
-        print('')
 
+    # 将ts文件转换为MP4，调用ffmpeg，同时启用硬件加速
     def convertTsToMp4(self, videoIndex ,videoName):
         tsFilePath = self.getFileTsPath(videoIndex, videoName)
         assFilePath = self.__getFileAssPath(videoIndex, videoName)
@@ -187,12 +187,24 @@ class VideoDownload:
         if not os.path.exists(tsFilePath):
             return
 
-        cmdStr = r'.\tools\ffmpeg.exe -hwaccel auto -i {0} -y -vf subtitles={1} {2}'.format(tsFilePath, assFilePath, mp4FilePath)
+        cmdStr = r'.\tools\ffmpeg.exe -hwaccel auto -i "{0}" -y -vf subtitles="{1}" "{2}"'.format(tsFilePath, assFilePath, mp4FilePath)
 
         if not os.path.exists(assFilePath):
-            cmdStr = r'.\tools\ffmpeg.exe -hwaccel auto -i {0} -y {1}'.format(tsFilePath, mp4FilePath)
+            cmdStr = r'.\tools\ffmpeg.exe -hwaccel auto -i "{0}" -y "{1}"'.format(tsFilePath, mp4FilePath)
 
-        os.system(cmdStr)
+        res = os.system(cmdStr)
+
+        if res == 0:
+            os.remove(tsFilePath)
+            if os.path.exists(assFilePath):
+                os.remove(assFilePath)
+
+            m3u8FilePath = self.getFileM3u8Path(videoIndex, videoName)
+            if os.path.exists(m3u8FilePath):
+                os.remove(m3u8FilePath)
+        else: 
+            raise Exception('error')
+
 
     # 获取m3u8视频文件的保存路径
     def getFileM3u8Path(self, videoIndex, videoName):
