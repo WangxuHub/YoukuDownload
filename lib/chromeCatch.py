@@ -14,10 +14,14 @@ ActionChains = webdriver.ActionChains
 DesiredCapabilities = webdriver.common.desired_capabilities.DesiredCapabilities
 
 d = DesiredCapabilities.CHROME
-d['loggingPrefs'] = { 'performance':'ALL' }
+d['goog:loggingPrefs'] = { 'performance':'ALL' }
 
 option = webdriver.ChromeOptions()
 option.add_argument('log-level=3')
+
+# LoggingPreferences logPrefs = new LoggingPreferences();
+# logPrefs.enable( LogType.PERFORMANCE, Level.ALL );
+# option.setCapability( "goog:loggingPrefs", logPrefs )
 
 # videoHtmlUrl = 'https://v.youku.com/v_show/id_XMjY4NjM5Mzc0MA==.html'
 videoHtmlUrl = 'https://v.youku.com/v_show/id_XNDE4MjY1NjEyOA==.html'
@@ -56,15 +60,16 @@ class ChromeCatch:
 
         browser.get(loginUrl)
 
-        browser.find_element_by_id('YT-showNormalLogin-text').click()
+        browser.switch_to_frame("alibaba-login-box")
+        browser.find_element_by_class_name('icon-password').click()
 
         user = youkuAccount.account.get('user')
         pwd = youkuAccount.account.get('pwd')
 
-        browser.find_element_by_id('YT-ytaccount').send_keys(user)
-        browser.find_element_by_id('YT-ytpassword').send_keys(pwd)
+        browser.find_element_by_id('fm-login-id').send_keys(user)
+        browser.find_element_by_id('fm-login-password').send_keys(pwd)
         
-        browser.find_element_by_id('YT-nloginSubmit').click()
+        browser.find_element_by_class_name('password-login').click()
         
         isLogin = True
         return True
