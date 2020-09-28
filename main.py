@@ -5,10 +5,12 @@ from threading import Thread
 
 import lib.videoDownload as videoDownload
 import lib.chromeCatch as chromeCatch
+
 # 抓取优酷视频
 
-videoGroupName = '火影忍者《博人传》'
-videoHomeUrl = 'https://v.youku.com/v_show/id_XMjcwMTA4Mzg2MA==.html'
+videoGroupName = '平凡的荣耀'
+videoHomeUrl = 'https://v.youku.com/v_show/id_XNDgzNDM2NTM1Ng==.html'
+
 
 def start():
     videoHelper = videoDownload.VideoDownload(videoGroupName, videoHomeUrl)
@@ -17,7 +19,6 @@ def start():
     if not os.path.exists(videoHelper.getCsvFile()):
         videoHelper.initVideoCsv()
         print('初始化csv文件 {0} 完成'.format(videoHelper.getCsvFile()))
-
 
     # 下载m3u8 和 ass 文件
     def downloadM3u8():
@@ -50,7 +51,7 @@ def start():
 
             videoIndex = curVideoItem[0]
             videoName = curVideoItem[1]
-            
+
             m3u8File = videoHelper.getFileM3u8Path(videoIndex, videoName)
             tsFile = videoHelper.getFileTsPath(videoIndex, videoName)
 
@@ -61,10 +62,10 @@ def start():
                 videoHelper.downloadTs(m3u8File, tsFile)
                 curVideoItem[4] = 'ts'
             except Exception as e:
-                curVideoItem[4] = 'fail:'+str(e)
+                curVideoItem[4] = 'fail:' + str(e)
 
             videoHelper.updateDownLoadItem(curVideoItem)
-    
+
     def convertTsToMp4():
         while True:
             curVideoItem = videoHelper.getUnConvertTsItem()
@@ -102,14 +103,12 @@ def start():
     # downloadTs()
     print('视频下载完毕')
 
+
 if __name__ == "__main__":
-    if len(sys.argv) >1:
+    if len(sys.argv) > 1:
         videoGroupName = sys.argv[1]
         videoHomeUrl = sys.argv[2]
-
-    videoGroupName = "一拳超人 第二季"
-    videoHomeUrl = "https://v.youku.com/v_show/id_XNDEyMjM2MTgzNg==.html"
+    else:
+        pass
 
     start()
-
-

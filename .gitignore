@@ -12,3 +12,4 @@ __pycache__
 /download
 /TestData/2.mp4
 /TestData/2.ts
+chromedriver.exe
