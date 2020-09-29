@@ -104,7 +104,7 @@ class VideoDownload:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
         }
-        pageRequest = 'https://v.youku.com/page/playlist?showid={0}&isSimple=false&page={1}'
+        # pageRequest = 'https://v.youku.com/page/playlist?showid={0}&isSimple=false&page={1}'
 
         csvFile = self.getCsvFile()
 
@@ -117,34 +117,44 @@ class VideoDownload:
         csv_writer = csv.writer(videoCsv)
 
         content = requests.get(self.__videoUrl, headers=headers).text
-
-        showid = re.search('showid: \'(.*)\',',content).group(1)
+        doc = pq(content)
 
         videoIndex = 1
         pageIndex = 1
-        while True:
-            try:
-                jsonData = requests.get(pageRequest.format(showid, pageIndex)).json()
-                htmlContent = jsonData['html']
-                
-                doc = pq(htmlContent)
 
-                list = doc('div.item.item-cover')
+        list = doc('.anthology-wrap .anthology-content a.box-item')
+        for item in list.items():
+            title = item.attr['title']
+            link =  item.attr['href']
 
-                if list == None:
-                    break
+            safeFileName = self.__safeFileName(title)
+            csv_writer.writerow((videoIndex, safeFileName, link))
 
-                for item in list.items():
-                    title = item.attr['title']
-                    link = 'https:'+ item('a.sn').attr['href']
+            videoIndex += 1
+            pageIndex += 1
 
-                    safeFileName = self.__safeFileName(title)
-                    csv_writer.writerow((videoIndex, safeFileName, link))
-
-                    videoIndex += 1
-                pageIndex += 1
-            except:
-                break
+        # while True:
+        #     try:
+        #         jsonData = requests.get(pageRequest.format(showid, pageIndex)).json()
+        #         # htmlContent = jsonData['html']
+        #
+        #
+        #         list = doc('div.item.item-cover')
+        #
+        #         if list == None:
+        #             break
+        #
+        #         for item in list.items():
+        #             title = item.attr['title']
+        #             link = 'https:'+ item('a.sn').attr['href']
+        #
+        #             safeFileName = self.__safeFileName(title)
+        #             csv_writer.writerow((videoIndex, safeFileName, link))
+        #
+        #             videoIndex += 1
+        #         pageIndex += 1
+        #     except:
+        #         break
 
         videoCsv.close()
 
